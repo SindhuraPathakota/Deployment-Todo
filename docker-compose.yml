@@ -1,0 +1,65 @@
+version: '3'
+services:
+  todo-frontend:
+    build: './todo-frontend'
+    # Host port proxy
+    ports:
+      - "8881:3000"
+    volumes:
+      - ./todo-frontend:/todo-frontend
+    environment:
+      # If a production enviroment is desired, set the APP_ENV variable to production
+      # APP_ENV: 'production'
+      APP_ENV: 'development'
+      API_URL: todo-backend:3030
+    links:
+      - todo-backend
+
+  todo-backend:
+    build: './todo-backend'
+    # backend host port defined the same as in the container
+    depends_on:
+      - db
+    links: 
+      - db
+    environment:
+      CONFIG_MYSQL_HOST: 'db'
+      CONFIG_MYSQL_USER: 'admin'
+      CONFIG_MYSQL_PASSWORD: 'admin'
+      CONFIG_MYSQL_DATABASE: 'my_database'
+      CONFIG_MYSQL_PORT: '3306'
+    ports:
+      - "3021:3030" # port that is accessible by outside
+    volumes:
+      - "./todo-backend:/todo-backend"
+
+  db: # also the hostname of this container
+    # This image exposes the standard MySQL port (3306)
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: 'root'
+      MYSQL_ROOT_PASSWORD: 'root'
+      MYSQL_DATABASE: 'my_database'
+      MYSQL_USER: 'admin'
+      MYSQL_PASSWORD: 'admin'
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - db
+    links: 
+      - db
+    # phpmyadmin port
+    ports:
+      - "3022:80"
+    
+  flyway:
+    image: flyway/flyway
+    command: -url=jdbc:mysql://db:3306/my_database?verifyServerCertificate=false&useSSL=false -user=root -password=root -connectRetries=60 migrate
+    volumes:
+      - ./flyway/sql:/flyway/sql
+    depends_on:
+      - db
+    links:
+      - db
+
