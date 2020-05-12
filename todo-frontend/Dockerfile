@@ -18,7 +18,7 @@ COPY . /todo-frontend
 # Install dependencies (Make sure to add node_modules to your .dockerignore 
 # in case you accidentally install locally.)
 RUN npm install
-RUN npm build
+RUN npm run build
 
 # Checks the enviroment variable in order to run the react
 CMD npm run start
