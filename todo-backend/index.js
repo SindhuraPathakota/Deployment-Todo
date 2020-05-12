@@ -19,9 +19,9 @@ app.use(function(req, res, next) {
  });
 var mysql = require('mysql');
 var con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "password"
+  host: "db",
+  user: "admin",
+  password: "admin"
 });
 
 con.connect(function(err) {
@@ -97,7 +97,7 @@ function validateTask(task) {
 }
 
 //const port = process.env.port || 3000;
-const port = 3000;
+const port = 3030;
 app.listen(port, () => {
     console.log(`Listening on port ${port}!!!`)
 });
