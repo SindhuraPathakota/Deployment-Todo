@@ -17,78 +17,77 @@ app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
        next();
  });
+var mysql = require('mysql');
+var con = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "password"
+});
+
+con.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected!");
+});
+
 
 //API's
-app.get('/api/tasks', (req, res) => {
-res.send(readDataFromFile());
-});
-
-app.get('/api/tasks/:id', (req, res) => {
-    let task = readDataFromFile().find(c => c.id === parseInt(req.params.id));
-    if (!task) return res.status(404).send('The task with the given id was not found');
-    res.send(task);
-});
-
-app.post('/api/tasks', (req, res) => {
-    const {error} = validateTask(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
-    let tasks=readDataFromFile();
-    let task_id=0;
-    tasks.forEach(task => {
-        task_id=task.id;
-    });
-    const task =
-     {
-        id: task_id+1, 
-        title: req.body.title
-         };
-    tasks.push(task);
-    writeDataToFile(tasks);
-    res.send(task);
+app.get('/api/lists',(req,res) => 
+{
+   let sql = "SELECT * FROM todo.todo_list";
+        con.query(sql, function (err, result) {
+          if (err) throw err;
+          res.send(result);
+        });
+      
 })
 
-app.put('/api/tasks/:id', (req, res) => {
-    let title = {
-        title : `${req.body.title}`
-    };
-    let tasks=readDataFromFile();
-    let task = tasks.find(c => c.id === parseInt(req.params.id));
-    if (!task) return res.status(404).send('The task with the given id was not found');
-    const {error} = validateTask(title);
-    if (error) return res.status(400).send(error.details[0].message);
-    task.title = req.body.title;
-    writeDataToFile(tasks);
-    res.send(task);
+app.get('/api/tasks/:list_id', (req, res) => {
+    let id=req.params.list_id;
+    let sql = `SELECT * FROM todo.todo WHERE list_id=${id}`;
+        con.query(sql, function (err, result) {
+          if (err) throw err;
+          res.send(result);
+        });
 });
 
-app.delete('/api/tasks/:id', (req, res) => {
-    let tasks=readDataFromFile();
-    let task = tasks.find(c => c.id === parseInt(req.params.id));
-    if (!task) return res.status(404).send('The task with the given id was not found');
-    const index = tasks.indexOf(task);
-    tasks.splice(index, 1);
-    writeDataToFile(tasks);
-    res.send(task);
+app.post('/api/list', (req, res) => {
+    let title=req.body.title;
+    let sql = `INSERT INTO todo.todo_list(title) VALUES('${title}')`;
+    con.query(sql, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+      });
+})
+
+app.post('/api/task/:list_id', (req, res) => {
+    console.log("murali");
+    let title=req.body.title; 
+    let id=req.params.list_id;
+    let sql = `INSERT INTO todo.todo(title,list_id) VALUES('${title}',${id})`; 
+    con.query(sql, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+      });
+});
+
+app.delete('/api/tasks/:todo_id', (req, res) => {
+    let id=req.params.todo_id;
+    let sql = `DELETE FROM todo.todo WHERE todo.todo_id=${id}`;
+    con.query(sql, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+      });
+});
+app.delete('/api/lists/:list_id', (req, res) => {
+    let id=req.params.list_id;
+    let sql = `DELETE FROM todo.todo_list WHERE todo_list.list_id=${id}`;
+    con.query(sql, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+      });
 });
 
 
-//Functions
-//Function to read Data from file
-function readDataFromFile()
-{
-    const data=fs.readFileSync(__dirname+"/data.json","utf8");
-    return JSON.parse(data);
-}
-// Function to write data to the file
-function writeDataToFile(jsonData)
-{
-    const data=JSON.stringify(jsonData,null,2);
-    fs.writeFile('./data.json', data, function(err) {
-        if(err) {
-            return console.log(err);
-        }
-    });
-}
 // function to validate the task
 function validateTask(task) {
     const schema = {
