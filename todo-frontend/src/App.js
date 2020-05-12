@@ -1,47 +1,54 @@
-import React, { Component } from 'react';
-import './App.css';
-import Todos from './components/Todos';
-import TodoList from './components/TodoList'
-import Header from './components/layout/Header';
-import Footer from './components/layout/Footer';
-import uuid from 'uuid';
-import axios from 'axios';
-import About from './components/layout/About';
+import React, { Component } from "react";
+import { ToastContainer } from "react-toastify";
+import http from "./services/httpService";
+import config from "./config.json";
+import "react-toastify/dist/ReactToastify.css";
+import "./App.css";
+import UpdateTask from "./components/update";
+import FooterPage from './components/footer';
+import AddList from './components/AddList';
+import AddTodo  from './components/AddTodo';
+import Table from './components/Table';
+import Header from './components/header';
+
+
 
 class App extends Component {
-
   state = {
-    todoTitles: []
-  }
+    lists : []
+  };
 
-  componentDidMount(){
-    this.getTitles();
+  async componentDidMount() {
+    const { data : lists } = await http.get(config.getTodoList);
+    this.setState({ lists });
   }
+ 
+addList = async(title) =>
+{
+  const obj = { title: `${title}`};
+  await http.post(config.postList, obj);
+  const { data : lists } = await http.get(config.getTodoList);
+  this.setState({ lists });
+}
+deleteList = async(id) =>
+{
+await http.delete(config.getTodoList+"/"+id);
+const { data : lists } = await http.get(config.getTodoList);
+this.setState({ lists });
+}
 
-  getTitles() {
-    axios.get('/GetTitles')
-    .then(res => this.setState({ todoTitles: res.data.data}));
-  }
-
-  addTodoList= (title, todo) => {
-    axios.post(`/AddTodo?todo='${todo}'&title='${title}'`).then(res => console.log(res)).then(() => this.getTitles());
-  }
 
   render() {
-    var appBody =
-        this.state.todoTitles.map((todos) => (
-          <Todos key={uuid.v4()} todoTitles={todos} getTitle={this.getTitles.bind(this)} />
-        ));
     return (
-      <div className="body">
-        <Header />
-
-        <div className="myContainer">
-        {appBody}
-        <TodoList addTodoList={this.addTodoList}/>
-        </div>
-        <Footer/>
-      </div>
+ <React.Fragment>
+ <Header/>
+ <br></br>
+ <AddList addList={this.addList} />
+ <br></br>
+ {this.state.lists.map ((list) => (
+ <Table key={list.list_id} id={list.list_id} title={list.title} deleteList={this.deleteList} />))}
+ <FooterPage/>
+ </React.Fragment>
     );
   }
 }
