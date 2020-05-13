@@ -18,16 +18,9 @@ COPY . /todo-frontend
 # Install dependencies (Make sure to add node_modules to your .dockerignore 
 # in case you accidentally install locally.)
 RUN npm install
+RUN npm run build
 
 # Checks the enviroment variable in order to run the react
-CMD if [ ${APP_ENV} = production ]; \
-	then \
-		npm install -g http-server && \
-		npm run build && \
-		cd build && \
-		hs -p 3000; \
-	else \
-		npm run start; \
-	fi
+CMD npm run start
 
 EXPOSE 3000

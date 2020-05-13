@@ -19,9 +19,9 @@ app.use(function(req, res, next) {
  });
 var mysql = require('mysql');
 var con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: ""
+  host: "db",
+  user: "admin",
+  password: "admin"
 });
 
 con.connect(function(err) {

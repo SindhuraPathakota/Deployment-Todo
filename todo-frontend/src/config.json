@@ -1,6 +1,8 @@
 {
-    "getTodoList" : "http://localhost:3030/api/lists",
-    "getTaskList" : "http://localhost:3030/api/tasks",
-    "postList"    : "http://localhost:3030/api/list",
-    "postTodo"    : "http://localhost:3030/api/task"
+
+    "getTodoList" : "http://todo-backend:3030/api/lists",
+    "getTaskList" : "http://todo-backend:3030/api/tasks",
+    "postList"    : "http://todo-backend:3030/api/list",
+    "postTodo"    : "http://todo-backend:3030/api/task"
+
 }
