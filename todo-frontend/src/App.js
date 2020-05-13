@@ -37,7 +37,6 @@ const { data : lists } = await http.get(config.getTodoList);
 this.setState({ lists });
 }
 
-
   render() {
     return (
  <React.Fragment>

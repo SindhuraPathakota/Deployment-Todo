@@ -21,7 +21,7 @@ var mysql = require('mysql');
 var con = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "password"
+  password: ""
 });
 
 con.connect(function(err) {
@@ -80,6 +80,10 @@ app.delete('/api/tasks/:todo_id', (req, res) => {
 });
 app.delete('/api/lists/:list_id', (req, res) => {
     let id=req.params.list_id;
+    let dependenceRecordsRmvSql=`DELETE FROM todo.todo WHERE todo.list_id=${id}`;
+    con.query(dependenceRecordsRmvSql,function (err,result){
+      if (err) throw err;
+    });
     let sql = `DELETE FROM todo.todo_list WHERE todo_list.list_id=${id}`;
     con.query(sql, function (err, result) {
         if (err) throw err;
@@ -87,6 +91,18 @@ app.delete('/api/lists/:list_id', (req, res) => {
       });
 });
 
+
+app.put('/api/task/:todo_id',(req,res)=>{
+  console.log("in edit");
+  let id=req.params.todo_id;
+  let taskText= req.body.todo_text;
+  console.log(id+" :"+taskText)
+  let sql = `UPDATE todo.todo SET todo.title='${taskText}' WHERE todo.todo_id=${id}`;
+  con.query(sql, function (err, result) {
+      if (err) throw err;
+      res.send(result);
+    });
+});
 
 // function to validate the task
 function validateTask(task) {
@@ -97,7 +113,7 @@ function validateTask(task) {
 }
 
 //const port = process.env.port || 3000;
-const port = 3000;
+const port = 3030;
 app.listen(port, () => {
     console.log(`Listening on port ${port}!!!`)
 });

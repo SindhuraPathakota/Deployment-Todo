@@ -16,7 +16,7 @@ export class addList extends Component
     onChange = (e) => this.setState({ title: e.target.value });
     render()
     {
-       return( <form onSubmit={this.onSubmit} style={{display: 'flex'}}>
+       return( <form onSubmit={this.onSubmit} className="container" style={{display: 'flex'}}>
                 <input 
                     type="text" 
                     name="title"
@@ -28,7 +28,7 @@ export class addList extends Component
                 <input 
                     type="submit"
                     value="Submit"
-                    className="btn"
+                    className="btn btn-primary"
                     style= {{flex: '1'}}
                 />
                 <br></br>

@@ -1,6 +1,6 @@
 {
-    "getTodoList" : "http://localhost:3000/api/lists",
-    "getTaskList" : "http://localhost:3000/api/tasks",
-    "postList"    : "http://localhost:3000/api/list",
-    "postTodo"    : "http://localhost:3000/api/task"
+    "getTodoList" : "http://localhost:3030/api/lists",
+    "getTaskList" : "http://localhost:3030/api/tasks",
+    "postList"    : "http://localhost:3030/api/list",
+    "postTodo"    : "http://localhost:3030/api/task"
 }
