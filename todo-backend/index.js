@@ -19,9 +19,9 @@ app.use(function(req, res, next) {
  });
 var mysql = require('mysql');
 var con = mysql.createConnection({
-  host: "db",
-  user: "admin",
-  password: "admin"
+  host: "localhost",
+  user: "root",
+  password: "password"
 });
 
 con.connect(function(err) {
@@ -69,6 +69,22 @@ app.post('/api/task/:list_id', (req, res) => {
         res.send(result);
       });
 });
+app.post('/api/lable',(req,res) => {
+    let sql=`INSERT INTO todo.lables(lable_name,lable_color) VALUES('${req.body.name}','${req.body.color}')`;
+    con.query(sql, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+      });
+})
+app.get('/api/lables',(req,res) => {
+    console.log("in post lable");
+    let sql='SELECT * FROM todo.lables';
+    con.query(sql, function (err, result) {
+        if (err) throw err;
+        console.log(result)
+        res.send(result);
+      });
+})
 
 app.delete('/api/tasks/:todo_id', (req, res) => {
     let id=req.params.todo_id;
@@ -80,30 +96,42 @@ app.delete('/api/tasks/:todo_id', (req, res) => {
 });
 app.delete('/api/lists/:list_id', (req, res) => {
     let id=req.params.list_id;
-    let dependenceRecordsRmvSql=`DELETE FROM todo.todo WHERE todo.list_id=${id}`;
-    con.query(dependenceRecordsRmvSql,function (err,result){
-      if (err) throw err;
-    });
     let sql = `DELETE FROM todo.todo_list WHERE todo_list.list_id=${id}`;
     con.query(sql, function (err, result) {
         if (err) throw err;
         res.send(result);
       });
 });
-
-
 app.put('/api/task/:todo_id',(req,res)=>{
-  console.log("in edit");
-  let id=req.params.todo_id;
-  let taskText= req.body.todo_text;
-  console.log(id+" :"+taskText)
-  let sql = `UPDATE todo.todo SET todo.title='${taskText}' WHERE todo.todo_id=${id}`;
-  con.query(sql, function (err, result) {
-      if (err) throw err;
-      res.send(result);
-    });
-});
+    console.log("in edit");
+    let id=req.params.todo_id;
+    let taskText= req.body.todo_text;
+    console.log(id+" :"+taskText)
+    let sql = `UPDATE todo.todo SET todo.title='${taskText}' WHERE todo.todo_id=${id}`;
+    con.query(sql, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+      });
+  });
 
+
+//Functions
+//Function to read Data from file
+function readDataFromFile()
+{
+    const data=fs.readFileSync(__dirname+"/data.json","utf8");
+    return JSON.parse(data);
+}
+// Function to write data to the file
+function writeDataToFile(jsonData)
+{
+    const data=JSON.stringify(jsonData,null,2);
+    fs.writeFile('./data.json', data, function(err) {
+        if(err) {
+            return console.log(err);
+        }
+    });
+}
 // function to validate the task
 function validateTask(task) {
     const schema = {
@@ -113,7 +141,7 @@ function validateTask(task) {
 }
 
 //const port = process.env.port || 3000;
-const port = 3030;
+const port = 3000;
 app.listen(port, () => {
     console.log(`Listening on port ${port}!!!`)
 });
