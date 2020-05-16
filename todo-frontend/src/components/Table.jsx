@@ -1,15 +1,16 @@
 import React, { Component } from "react";
-import AddTodo from './AddTodo';
+import AddTodo from './CreateTodo';
 import http from "../services/httpService";
 import config from "../config.json";
 import PropTypes from 'prop-types';
-import "../css/table.css";
+						  
+import { Lables } from './labels';
 class Table extends Component {
   state = {
     tasks : [],
     isInEditMode: false,
-    eidtTodoId:0,
-    editedText:"",
+    title :''
+				  
   };
   
 
@@ -29,13 +30,12 @@ handleDelete = async (task) => {
   const { data : tasks } = await http.get(config.getTaskList+ "/" + this.props.id);
   this.setState({ tasks });
 };
-handleListDelete = (id) => {
+handleListDelete =  (id) => {
   this.props.deleteList(id);
 }
 changeEditMode = () => {
   console.log("edited");
 }
-
 handleUpdate=(task)=>{
   this.setState({eidtTodoId:task.todo_id,
     isInEditMode :!this.state.isInEditMode}) ;
@@ -54,12 +54,12 @@ textOnChange=(e)=>{
 this.setState({editedText:e.target.value}) ;
 }
 
-renderDefaultView =(tas)=>{return <td> {tas.title} </td>}
+renderDefaultView =(tas)=>{return <td> {tas.title}</td>}														 
   render() {
     return (
       <React.Fragment>
       <br></br>
-        <table className="table table-striped table-bordered table-hover container">
+        <table  className="table table-striped table-bordered table-hover container" style={{margin:'25px'}}>
           <thead className="thead-dark">
             <tr className="change">
               <th>{this.props.title}</th>
@@ -73,21 +73,19 @@ renderDefaultView =(tas)=>{return <td> {tas.title} </td>}
           </thead> 
           <tbody>
           {this.state.tasks.map((task) => (
-              <tr key={task.todo_id}>
-
-                {this.state.eidtTodoId===task.todo_id?this.state.isInEditMode ?
+        
+																			    <tr key={task.todo_id}>
+ {this.state.eidtTodoId===task.todo_id?this.state.isInEditMode ?
                 <td>    
                     <input type="text" defaultValue={task.title} onChange={this.textOnChange} ></input>
                     <button className="btn-success" onClick={()=>this.updateEditTask(task)}>Save</button>
                     <button className="btn-danger" onClick={this.handleUpdate}>X</button>
                 </td>
                 :this.renderDefaultView(task): this.renderDefaultView(task)}
-                {/*this.state.isInEditMode ?<td className={task.todo_id}><input type="text" defaultValue={task.title}></input></td>:<td onDoubleClick={this.changeEditMode}> {task.title} </td>}
-                {/* <td onDoubleClick={this.changeEditMode}> {task.title} </td> */}
                 <td>
                   <button
                     className="glyphicon glyphicon-edit"
-                    onClick={()=> this.handleUpdate(task)}
+                    onClick={() => this.handleUpdate(task)}
                   >
                     Edit
                   </button>
