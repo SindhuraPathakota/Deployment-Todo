@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { ChromePicker } from 'react-color';
+//import { ChromePicker } from 'react-color';
 
 
 export class About extends Component

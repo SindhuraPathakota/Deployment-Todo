@@ -5,9 +5,11 @@ import Home from './components/Home';
 import "./App.css";
 import Header from './components/header';
 import Labels from './components/labels';
-import { About } from './components/about';
+import  About  from './components/about';
 import Login from './components/login';
 import Register from './components/register';
+import "./login.css"
+import "./register.css"
 
 
 
@@ -24,7 +26,7 @@ class App extends Component {
       <Route path="/labels" component={Labels}/>
       <Route path="/about" component={About}/>
       <Route path="/login" component={Login}/>
-      <Route path="/signup" component={Register}/>
+      <Route path="/register" component={Register}/>
       <Route path="/" exact component={Home}/>
       </Switch>
       </div>    );
