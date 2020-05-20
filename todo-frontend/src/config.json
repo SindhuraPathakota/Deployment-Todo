@@ -1,10 +1,9 @@
 {
-    "getTodoList" : "http://localhost:3021/api/lists",
-    "getTaskList" : "http://localhost:3021/api/tasks",
-    "getLableList" : "http://localhost:3021/api/lables",
-    "postList"    : "http://localhost:3021/api/list",
-    "postTodo"    : "http://localhost:3021/api/task",
-    "postLable"    : "http://localhost:3021/api/lable",
-    "labelLink": "http://localhost:3021/api/label"
-
+    "getTodoList" : "http://158.69.156.182:3021/api/lists",
+    "getTaskList" : "http://158.69.156.182:3021/api/tasks",
+    "getLableList" : "http://158.69.156.182:3021/api/lables",
+    "postList"    : "http://158.69.156.182:3021/api/list",
+    "postTodo"    : "http://158.69.156.182:3021/api/task",
+    "postLable"    : "http://158.69.156.182:3021/api/lable",
+    "labelLink": "http://158.69.156.182:3021/api/label"
 }
