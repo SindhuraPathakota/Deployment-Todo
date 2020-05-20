@@ -19,7 +19,7 @@ app.use(function(req, res, next) {
  });
 var mysql = require('mysql');
 var con = mysql.createConnection({
-  host: "localhost",
+  host: "db",
   user: "admin",
   database: "my_database",
   password: "admin"
