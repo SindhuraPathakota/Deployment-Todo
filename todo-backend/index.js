@@ -19,9 +19,15 @@ app.use(function(req, res, next) {
  });
 var mysql = require('mysql');
 var con = mysql.createConnection({
-  host: '127.0.0.1',
+  
+  host: 'db',
   user: "admin",
   password: "admin"
+ 
+ /*  host: "localhost",
+  user: "root",
+  password: "" */
+ 
 });
 
 con.connect(function(err) {
@@ -33,7 +39,7 @@ con.connect(function(err) {
 //API's
 app.get('/api/lists',(req,res) => 
 {
-   let sql = "SELECT * FROM todo.todo_list";
+   let sql = "SELECT * FROM my_database.todo_list";
         con.query(sql, function (err, result) {
           if (err) throw err;
           res.send(result);
@@ -43,7 +49,7 @@ app.get('/api/lists',(req,res) =>
 
 app.get('/api/tasks/:list_id', (req, res) => {
     let id=req.params.list_id;
-    let sql = `SELECT * FROM todo.todo WHERE list_id=${id}`;
+    let sql = `SELECT * FROM my_database.todo WHERE list_id=${id}`;
         con.query(sql, function (err, result) {
           if (err) throw err;
           res.send(result);
@@ -52,7 +58,7 @@ app.get('/api/tasks/:list_id', (req, res) => {
 
 app.post('/api/list', (req, res) => {
     let title=req.body.title;
-    let sql = `INSERT INTO todo.todo_list(title) VALUES('${title}')`;
+    let sql = `INSERT INTO my_database.todo_list(title) VALUES('${title}')`;
     con.query(sql, function (err, result) {
         if (err) throw err;
         res.send(result);
@@ -60,19 +66,41 @@ app.post('/api/list', (req, res) => {
 })
 
 app.post('/api/task/:list_id', (req, res) => {
-    console.log("murali");
     let title=req.body.title; 
     let id=req.params.list_id;
-    let sql = `INSERT INTO todo.todo(title,list_id) VALUES('${title}',${id})`; 
+    let sql = `INSERT INTO my_database.todo(title,list_id) VALUES('${title}',${id})`; 
     con.query(sql, function (err, result) {
         if (err) throw err;
         res.send(result);
       });
 });
-
+app.post('/api/lable',(req,res) => {
+    let sql=`INSERT INTO my_database.lables(lable_name,lable_color) VALUES('${req.body.name}','${req.body.color}')`;
+    con.query(sql, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+      });
+})
+app.get('/api/lables',(req,res) => {
+    console.log("in post lable");
+    let sql='SELECT * FROM my_database.lables';
+    con.query(sql, function (err, result) {
+        if (err) throw err;
+        console.log(result)
+        res.send(result);
+      });
+})
+app.delete('/api/label/:lable_id', (req, res) => {
+  let labelId=req.params.lable_id;
+  let sql = `DELETE FROM my_database.lables WHERE lables.lable_id=${labelId}`;
+  con.query(sql, function (err, result) {
+      if (err) throw err;
+      res.send(result);
+    });
+});
 app.delete('/api/tasks/:todo_id', (req, res) => {
     let id=req.params.todo_id;
-    let sql = `DELETE FROM todo.todo WHERE todo.todo_id=${id}`;
+    let sql = `DELETE FROM my_database.todo WHERE todo.todo_id=${id}`;
     con.query(sql, function (err, result) {
         if (err) throw err;
         res.send(result);
@@ -80,30 +108,57 @@ app.delete('/api/tasks/:todo_id', (req, res) => {
 });
 app.delete('/api/lists/:list_id', (req, res) => {
     let id=req.params.list_id;
-    let dependenceRecordsRmvSql=`DELETE FROM todo.todo WHERE todo.list_id=${id}`;
+    let dependenceRecordsRmvSql=`DELETE FROM my_database.todo WHERE todo.list_id=${id}`;
     con.query(dependenceRecordsRmvSql,function (err,result){
       if (err) throw err;
     });
-    let sql = `DELETE FROM todo.todo_list WHERE todo_list.list_id=${id}`;
+    let sql = `DELETE FROM my_database.todo_list WHERE todo_list.list_id=${id}`;
     con.query(sql, function (err, result) {
         if (err) throw err;
         res.send(result);
       });
 });
 
+app.put('/api/label/:lable_id',(req,res)=>{
 
-app.put('/api/task/:todo_id',(req,res)=>{
-  console.log("in edit");
-  let id=req.params.todo_id;
-  let taskText= req.body.todo_text;
-  console.log(id+" :"+taskText)
-  let sql = `UPDATE todo.todo SET todo.title='${taskText}' WHERE todo.todo_id=${id}`;
+  let labelId=req.params.lable_id;
+  let labelText= req.body.label_text;
+console.log(labelText);
+  let sql = `UPDATE my_database.lables SET lables.lable_name='${labelText}' WHERE lables.lable_id=${labelId}`;
   con.query(sql, function (err, result) {
       if (err) throw err;
       res.send(result);
     });
 });
 
+app.put('/api/task/:todo_id',(req,res)=>{
+    let id=req.params.todo_id;
+    let taskText= req.body.todo_text;
+    let sql = `UPDATE my_database.todo SET todo.title='${taskText}' WHERE todo.todo_id=${id}`;
+    con.query(sql, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+      });
+  });
+
+
+//Functions
+//Function to read Data from file
+function readDataFromFile()
+{
+    const data=fs.readFileSync(__dirname+"/data.json","utf8");
+    return JSON.parse(data);
+}
+// Function to write data to the file
+function writeDataToFile(jsonData)
+{
+    const data=JSON.stringify(jsonData,null,2);
+    fs.writeFile('./data.json', data, function(err) {
+        if(err) {
+            return console.log(err);
+        }
+    });
+}
 // function to validate the task
 function validateTask(task) {
     const schema = {

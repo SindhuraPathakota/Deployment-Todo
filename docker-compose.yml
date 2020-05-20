@@ -47,19 +47,9 @@ services:
     image: phpmyadmin/phpmyadmin
     depends_on:
       - db
-    links: 
+    links:
       - db
     # phpmyadmin port
     ports:
       - "3022:80"
-    
-  flyway:
-    image: flyway/flyway
-    command: -url=jdbc:mysql://db:3306/my_database?verifyServerCertificate=false&useSSL=false -user=root -password=root -connectRetries=60 migrate
-    volumes:
-      - ./flyway/sql:/flyway/sql
-    depends_on:
-      - db
-    links:
-      - db
 
