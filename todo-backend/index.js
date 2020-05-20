@@ -20,9 +20,9 @@ app.use(function(req, res, next) {
 var mysql = require('mysql');
 var con = mysql.createConnection({
   host: "db",
-  user: "admin",
+  user: "root",
   database: "my_database",
-  password: "admin"
+  password: "root"
 });
 
 con.connect(function(err) {
@@ -34,7 +34,7 @@ con.connect(function(err) {
 //API's
 app.get('/api/lists',(req,res) => 
 {
-   let sql = "SELECT * FROM todo.todo_list";
+   let sql = "SELECT * FROM my_database.todo_list";
         con.query(sql, function (err, result) {
           if (err) throw err;
           res.send(result);
@@ -44,7 +44,7 @@ app.get('/api/lists',(req,res) =>
 
 app.get('/api/tasks/:list_id', (req, res) => {
     let id=req.params.list_id;
-    let sql = `SELECT * FROM todo.todo WHERE list_id=${id}`;
+    let sql = `SELECT * FROM my_database.todo WHERE list_id=${id}`;
         con.query(sql, function (err, result) {
           if (err) throw err;
           res.send(result);
@@ -53,7 +53,7 @@ app.get('/api/tasks/:list_id', (req, res) => {
 
 app.post('/api/list', (req, res) => {
     let title=req.body.title;
-    let sql = `INSERT INTO todo.todo_list(title) VALUES('${title}')`;
+    let sql = `INSERT INTO my_database.todo_list(title) VALUES('${title}')`;
     con.query(sql, function (err, result) {
         if (err) throw err;
         res.send(result);
@@ -61,17 +61,17 @@ app.post('/api/list', (req, res) => {
 })
 
 app.post('/api/task/:list_id', (req, res) => {
-    console.log("murali");
+  
     let title=req.body.title; 
     let id=req.params.list_id;
-    let sql = `INSERT INTO todo.todo(title,list_id) VALUES('${title}',${id})`; 
+    let sql = `INSERT INTO my_database.todo(title,list_id) VALUES('${title}',${id})`; 
     con.query(sql, function (err, result) {
         if (err) throw err;
         res.send(result);
       });
 });
 app.post('/api/lable',(req,res) => {
-    let sql=`INSERT INTO todo.lables(lable_name,lable_color) VALUES('${req.body.name}','${req.body.color}')`;
+    let sql=`INSERT INTO my_datbase.lables(lable_name,lable_color) VALUES('${req.body.name}','${req.body.color}')`;
     con.query(sql, function (err, result) {
         if (err) throw err;
         res.send(result);
@@ -79,7 +79,7 @@ app.post('/api/lable',(req,res) => {
 })
 app.get('/api/lables',(req,res) => {
     console.log("in post lable");
-    let sql='SELECT * FROM todo.lables';
+    let sql='SELECT * FROM my_database.lables';
     con.query(sql, function (err, result) {
         if (err) throw err;
         console.log(result)
@@ -141,8 +141,8 @@ function validateTask(task) {
     return Joi.validate(task, schema);
 }
 
-//const port = process.env.port || 3000;
-const port = 3000;
+//const port = process.env.port || 3030;
+const port = 3030;
 app.listen(port, () => {
     console.log(`Listening on port ${port}!!!`)
 });
