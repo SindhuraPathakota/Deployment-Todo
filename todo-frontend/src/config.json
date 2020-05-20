@@ -1,8 +1,8 @@
 {
-    "getTodoList" : "http://localhost:3000/api/lists",
-    "getTaskList" : "http://localhost:3000/api/tasks",
-    "getLableList" : "http://localhost:3000/api/lables",
-    "postList"    : "http://localhost:3000/api/list",
-    "postTodo"    : "http://localhost:3000/api/task",
-    "postLable"    : "http://localhost:3000/api/lable"
+    "getTodoList" : "http://todo-backend:3000/api/lists",
+    "getTaskList" : "http://todo-backend:3000/api/tasks",
+    "getLableList" : "http://todo-backend:3000/api/lables",
+    "postList"    : "http://todo-backend:3000/api/list",
+    "postTodo"    : "http://todo-backend:3000/api/task",
+    "postLable"    : "http://todo-backend:3000/api/lable"
 }
