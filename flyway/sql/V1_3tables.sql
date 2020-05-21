@@ -10,11 +10,15 @@ CREATE TABLE `lables` (
   `lable_color` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`lable_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `lables`
---
+
+
+CREATE TABLE `todo_list` (
+  `list_id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(256) NOT NULL,
+  PRIMARY KEY (`list_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8mb4;
+
 
 
 
@@ -27,13 +31,4 @@ CREATE TABLE `todo` (
   CONSTRAINT `todo_ibfk_1` FOREIGN KEY (`list_id`) REFERENCES `todo_list` (`list_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
 
-
---
--- Dumping data for table `todo`
-
-CREATE TABLE `todo_list` (
-  `list_id` int(11) NOT NULL AUTO_INCREMENT,
-  `title` varchar(256) NOT NULL,
-  PRIMARY KEY (`list_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8mb4;
 
