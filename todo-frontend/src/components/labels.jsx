@@ -12,7 +12,8 @@ export class Lables extends Component
         color :'',      
         isInEditMode: false,
         lables : [],
-        editButton: "Edit",
+        editedText:'',
+
     }
 
     textOnChange=(e)=>{
@@ -46,12 +47,7 @@ export class Lables extends Component
 
 
     handleEditLabel=(label) =>{
-    if(this.state.editButton==="Cancel")
-    {
-        this.setState({editButton:"Edit"}) ;
-    }else{
-        this.setState({editButton:"Cancel"}) ;
-    }
+
         this.setState({eidtLabelId:label.lable_id,
             isInEditMode :!this.state.isInEditMode}) ;
     }
@@ -62,8 +58,12 @@ export class Lables extends Component
     }
     updateEditLabel= async (label) =>{
 
-        this.setState({isInEditMode:false,editButton:"Edit"});
-        let label_text =this.state.editedText;
+        
+        let label_text='' ;
+        if(this.state.editedText!='')
+        {label_text=this.state.editedText;}
+        else{label_text=label.lable_name}
+        this.setState({isInEditMode:false,editedText:''});
         const obj = { label_text: `${label_text}`};  
         await http.put(config.labelLink+"/"+label.lable_id ,obj);
         const { data :  lables} = await http.get(config.getLableList);
@@ -109,9 +109,11 @@ export class Lables extends Component
                     
                        :this.renderDefaultLabel(label):this.renderDefaultLabel(label) }
                        &nbsp;&nbsp; &nbsp;&nbsp;
-                            <button className="btn btn-danger" onClick={() => this.handleDeleteLabel(label)}>Delete</button>
+                       <button className="btn btn-primary" disabled={this.state.isInEditMode?true:false} onClick={() => this.handleEditLabel(label)}>Edit</button>
+                        
                             &nbsp;&nbsp;&nbsp; &nbsp;
-                        <button className="btn btn-primary" onClick={() => this.handleEditLabel(label)}>{this.state.editButton}</button>
+                            <button className="btn btn-danger" onClick={() => this.handleDeleteLabel(label)}>Delete</button>
+                        
                         </li>
                      ))} 
                    </ul>

@@ -9,7 +9,10 @@ class Table extends Component {
   state = {
     tasks : [],
     isInEditMode: false,
-    title :''	  
+    editedText:'',
+    title :'',
+    taskPointsId:0,
+    givepointsBtnTxt:'Give Points'	  
   };
   
 
@@ -41,8 +44,11 @@ handleUpdate=(task)=>{
 }
 
 updateEditTask= async(task)=>{
-this.setState({isInEditMode:false});
-let todo_text =this.state.editedText;
+let todo_text=''
+if(this.state.editedText!='')
+{todo_text=this.state.editedText;}
+ else{todo_text=task.title}
+this.setState({isInEditMode:false,editedText:''});
 const obj = { todo_text: `${todo_text}`};  
 await http.put(config.postTodo+"/"+task.todo_id ,obj);
 const { data : tasks } = await http.get(config.getTaskList+ "/" + this.props.id);
@@ -51,6 +57,22 @@ this.setState({ tasks });
 }
 textOnChange=(e)=>{
 this.setState({editedText:e.target.value}) ;
+}
+pointsOnChange=(e)=>{
+  this.setState({pointsValue:e.target.value});
+}
+
+handleGivePoints= async(task) =>{
+  if(this.state.givepointsBtnTxt !=='Save'){
+    this.setState({givepointsBtnTxt : 'Save',
+    taskPointsId:task.todo_id});
+  }else{
+    this.setState({givepointsBtnTxt : 'Give Points',taskPointsId:0});
+    const body ={task_points:this.state.pointsValue};
+   await http.put(config.postPoints+"/"+task.todo_id,body); 
+   const { data : tasks } = await http.get(config.getTaskList+ "/" + this.props.id);
+   this.setState({ tasks }); 
+  }
 }
 
 renderDefaultView =(tas)=>{return <td> {tas.title}</td>}														 
@@ -66,7 +88,6 @@ renderDefaultView =(tas)=>{return <td> {tas.title}</td>}
               <th><button
                     className="btn btn-danger btn-sm"
                     onClick={(e) => { if (window.confirm('Are you sure you wish to delete this List?')) this.handleListDelete(this.props.id)}}>
-                      
                     Delete
                   </button></th>
             </tr>
@@ -74,7 +95,7 @@ renderDefaultView =(tas)=>{return <td> {tas.title}</td>}
           <tbody>
           {this.state.tasks.map((task) => (
         
-																			    <tr key={task.todo_id}>
+				<tr key={task.todo_id}>
         {this.state.eidtTodoId===task.todo_id?this.state.isInEditMode ?
                 <td>    
                     <input type="text" defaultValue={task.title} onChange={this.textOnChange} ></input>
@@ -83,12 +104,18 @@ renderDefaultView =(tas)=>{return <td> {tas.title}</td>}
                 </td>
                 :this.renderDefaultView(task): this.renderDefaultView(task)}
                 <td>
-                  <button
-                    className="glyphicon glyphicon-edit"
-                    onClick={() => this.handleUpdate(task)}
-                  >
-                    Edit
-                  </button>
+                  <div style={{display:'flex'}}>
+                    <button style={{marginRight: '8px'}}
+                     className="btn btn-info" disabled={this.state.isInEditMode}
+                     onClick={() => this.handleUpdate(task)}>
+                     Edit
+                    </button> 
+                   
+                    {this.state.taskPointsId===task.todo_id?this.state.givepointsBtnTxt === "Save"?<input style={{width: '10%'}} type="number" defaultValue={task.task_points} onChange={this.pointsOnChange}/>:' ':''}
+
+                    <button className="btn btn-info" onClick={()=> this.handleGivePoints(task)}>{this.state.givepointsBtnTxt}</button>
+                    {task.task_points !== 0?<h6 style={{color:'darkblue'}}>Task Points : {task.task_points} </h6>:''}
+                  </div>
                 </td>
                 <td>
                   <button
