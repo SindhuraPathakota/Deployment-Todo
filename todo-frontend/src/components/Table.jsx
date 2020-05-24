@@ -9,7 +9,8 @@ class Table extends Component {
   state = {
     tasks : [],
     isInEditMode: false,
-    title :''	  
+    title :'',
+    sortButton : 'Sort'
   };
   
 
@@ -53,7 +54,30 @@ textOnChange=(e)=>{
 this.setState({editedText:e.target.value}) ;
 }
 
-renderDefaultView =(tas)=>{return <td> {tas.title}</td>}														 
+handleSort= async()=>{
+ console.log("sort");
+  
+  if(this.state.sortButton === 'Sort'){
+    let sortArray = this.state.tasks.sort(function(a,b) {
+      if(a.title.toLowerCase() < b.title.toLowerCase())
+        return -1;
+      if(a.title.toLowerCase() > b.title.toLowerCase())
+        return 1;
+        return 0;
+    });
+
+    this.setState({
+      tasks : sortArray,
+      sortButton:'Re-Order'
+    })
+  }else{
+    const { data : tasks } = await http.get(config.getTaskList+ "/" + this.props.id );
+    this.setState({ tasks , sortButton : 'Sort'});
+  }
+}
+
+renderDefaultView =(tas)=>{return <td> {tas.title}</td>}	
+
   render() {
     return (
       <React.Fragment>
@@ -68,7 +92,8 @@ renderDefaultView =(tas)=>{return <td> {tas.title}</td>}
                     onClick={(e) => { if (window.confirm('Are you sure you wish to delete this List?')) this.handleListDelete(this.props.id)}}>
                       
                     Delete
-                  </button></th>
+                  </button>
+    <button className="btn btn-danger btn-sm" onClick={this.handleSort}>{this.state.sortButton}</button></th>
             </tr>
           </thead> 
           <tbody>

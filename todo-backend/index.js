@@ -23,11 +23,11 @@ var con = mysql.createConnection({
   host: 'db',
   user: "root",
   password: "root"
- 
- /*  host: "localhost",
+  /*
+   host: "localhost",
   user: "root",
-  password: "" */
- 
+  password: "" 
+ */
 });
 
 con.connect(function(err) {
