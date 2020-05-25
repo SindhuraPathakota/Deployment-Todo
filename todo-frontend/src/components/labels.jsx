@@ -70,7 +70,7 @@ export class Lables extends Component
         this.setState({ lables }); 
     }
 
-    renderDefaultLabel =(label)=>{return  <p style={{backgroundColor:`${label.lable_color}`,   padding:' 6px',    width: '100px'}}>{label.lable_name}</p>}
+    renderDefaultLabel =(label)=>{return  <p style={{backgroundColor:`${label.lable_color}`,   padding:' 6px',    width: '150px'}}>{label.lable_name}</p>}
     onChange = (e) => this.setState({ title: e.target.value });
     render()
     {
@@ -112,7 +112,8 @@ export class Lables extends Component
                        <button className="btn btn-primary" disabled={this.state.isInEditMode?true:false} onClick={() => this.handleEditLabel(label)}>Edit</button>
                         
                             &nbsp;&nbsp;&nbsp; &nbsp;
-                            <button className="btn btn-danger" onClick={() => this.handleDeleteLabel(label)}>Delete</button>
+                            
+                            <button className="btn btn-danger" onClick={(e) => { if (window.confirm('Check if the label is assigned to the task')) this.handleDeleteLabel(label)}}>Delete</button>
                         
                         </li>
                      ))} 

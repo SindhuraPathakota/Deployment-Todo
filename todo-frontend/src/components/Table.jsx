@@ -12,20 +12,25 @@ class Table extends Component {
     editedText:'',
     title :'',
     taskPointsId:0,
-    givepointsBtnTxt:'Give Points'	  
+    givepointsBtnTxt:'Give Points',
+    sortButton : 'Sort',
+    taskLabels :[],
+    isInSetLabel :false,
+    setLabelId:0,
   };
   
 
 async componentDidMount() {
   const { data : tasks } = await http.get(config.getTaskList+ "/" + this.props.id );
-  this.setState({ tasks });
+  const { data : taskLabels } = await http.get(config.getLableList);
+  this.setState({ tasks,taskLabels });
 }
 addTodo = async (title) =>
 {
   const obj = { title: `${title}`};
   await http.post(config.postTodo+"/"+this.props.id, obj);
   const { data : tasks } = await http.get(config.getTaskList+ "/" + this.props.id);
-  this.setState({ tasks });
+  this.setState({ tasks,sortButton:'Sort' });
 } 
 handleDelete = async (task) => {
   await http.delete(config.getTaskList+"/"+task.todo_id);
@@ -52,7 +57,7 @@ this.setState({isInEditMode:false,editedText:''});
 const obj = { todo_text: `${todo_text}`};  
 await http.put(config.postTodo+"/"+task.todo_id ,obj);
 const { data : tasks } = await http.get(config.getTaskList+ "/" + this.props.id);
-this.setState({ tasks }); 
+this.setState({ tasks,sortButton:'Sort' }); 
  
 }
 textOnChange=(e)=>{
@@ -71,11 +76,61 @@ handleGivePoints= async(task) =>{
     const body ={task_points:this.state.pointsValue};
    await http.put(config.postPoints+"/"+task.todo_id,body); 
    const { data : tasks } = await http.get(config.getTaskList+ "/" + this.props.id);
-   this.setState({ tasks }); 
+   this.setState({ tasks,sortButton:'Sort' }); 
   }
 }
 
-renderDefaultView =(tas)=>{return <td> {tas.title}</td>}														 
+handleSort= async()=>{
+  if(this.state.sortButton === 'Sort'){
+    let sortArray = this.state.tasks.sort(function(a,b) {
+      if(a.title.toLowerCase() < b.title.toLowerCase())
+        return -1;
+      if(a.title.toLowerCase() > b.title.toLowerCase())
+        return 1;
+        return 0;
+    });
+
+    this.setState({
+      tasks : sortArray,
+      sortButton:'Re-Order'
+    })
+  }else{
+    const { data : tasks } = await http.get(config.getTaskList+ "/" + this.props.id );
+    this.setState({ tasks , sortButton : 'Sort'});
+  }
+}
+
+handleGiveLabels= async(todoId) =>{
+  const { data : taskLabels } = await http.get(config.getLableList);
+  this.setState({ taskLabels,isInSetLabel:true,setLabelId:todoId });
+}
+getLabels=()=>{
+  return(
+    <select>
+      {this.state.taskLabels.map((taskLabel) => {    
+        
+        <option>{taskLabel.lable_name}</option>
+      })}
+    </select>
+  )
+}
+handleSelectLabel=async (e)=>{
+  let labelId=e.target.value;
+  const body ={label_id:labelId};
+  
+  await http.put(config.postLabelToTodo+"/"+this.state.setLabelId,body);
+
+  const { data : tasks } = await http.get(config.getTaskList+ "/" + this.props.id);
+  this.setState({tasks:tasks,isInSetLabel:false,setLabelId:0,});
+}
+renderLabel=(labelId)=>{
+
+this.state.taskLabels.map((label)=>{if(label.lable_id===labelId){this.setState({selectedLabel:label})}})
+
+}
+
+renderDefaultView =(tas)=>{return <td> {tas.title}</td>}	
+
   render() {
     return (
       <React.Fragment>
@@ -89,7 +144,9 @@ renderDefaultView =(tas)=>{return <td> {tas.title}</td>}
                     className="btn btn-danger btn-sm"
                     onClick={(e) => { if (window.confirm('Are you sure you wish to delete this List?')) this.handleListDelete(this.props.id)}}>
                     Delete
-                  </button></th>
+                  </button>
+                  &nbsp;&nbsp;
+                <button className="btn btn-danger btn-sm" onClick={this.handleSort}>{this.state.sortButton}</button></th>
             </tr>
           </thead> 
           <tbody>
@@ -103,18 +160,35 @@ renderDefaultView =(tas)=>{return <td> {tas.title}</td>}
                     <button className="btn-danger" onClick={this.handleUpdate}>X</button>
                 </td>
                 :this.renderDefaultView(task): this.renderDefaultView(task)}
+                
+              
+              
                 <td>
+        
                   <div style={{display:'flex'}}>
+                 
+              
                     <button style={{marginRight: '8px'}}
                      className="btn btn-info" disabled={this.state.isInEditMode}
                      onClick={() => this.handleUpdate(task)}>
                      Edit
-                    </button> 
+                    </button>
+                    {task.lable_id !=null?
+                    this.state.taskLabels.map((l)=>l.lable_id===task.lable_id?<p style={{backgroundColor:l.lable_color,marginRight: '8px',padding: '0px 15px'}}>{l.lable_name}</p>:'')
+                  
+                    :''}  
+                    {this.state.isInSetLabel?this.state.setLabelId===task.todo_id?
+                      <select onChange={this.handleSelectLabel}>
+                        <option>---select label---</option>
+                        {this.state.taskLabels.map((taskLabel) => <option key={taskLabel.lable_id} value={taskLabel.lable_id} style={{backgroundColor:`${taskLabel.lable_color}`}}>{taskLabel.lable_name}</option>)}
+                      </select>:'':''}
+                   
+                   <button style={{marginRight: '8px'}} className="btn btn-info" disabled={this.state.isInSetLabel} onClick={()=>this.handleGiveLabels(task.todo_id)}>Labels</button>
                    
                     {this.state.taskPointsId===task.todo_id?this.state.givepointsBtnTxt === "Save"?<input style={{width: '10%'}} type="number" defaultValue={task.task_points} onChange={this.pointsOnChange}/>:' ':''}
-
-                    <button className="btn btn-info" onClick={()=> this.handleGivePoints(task)}>{this.state.givepointsBtnTxt}</button>
                     {task.task_points !== 0?<h6 style={{color:'darkblue'}}>Task Points : {task.task_points} </h6>:''}
+                    <button className="btn btn-info" onClick={()=> this.handleGivePoints(task)}>{this.state.givepointsBtnTxt}</button>
+                    
                   </div>
                 </td>
                 <td>

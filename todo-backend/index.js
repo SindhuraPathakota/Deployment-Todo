@@ -20,12 +20,12 @@ app.use(function(req, res, next) {
 var mysql = require('mysql');
 var con = mysql.createConnection({
   
- 
+  
   host: 'db',
   user: "root",
   password: "root"
- /* 
-  host: "localhost",
+ /*
+   host: "localhost",
   user: "root",
   password: "" 
  */
@@ -124,7 +124,7 @@ app.put('/api/task/addpoints/:task_id',(req,res)=>{
 
   let taskId=req.params.task_id;
   let taskPoints= req.body.task_points;
-  console.log(taskPoints);
+
   let sql = `UPDATE my_database.todo SET todo.task_points='${taskPoints}' WHERE todo.todo_id=${taskId}`;
   con.query(sql, function (err, result) {
       if (err) throw err;
@@ -132,6 +132,17 @@ app.put('/api/task/addpoints/:task_id',(req,res)=>{
     });
 });
 
+app.put('/api/task/addlabel/:task_id',(req,res)=>{
+  
+  let taskId=req.params.task_id;
+  let labelId= req.body.label_id;
+  console.log(labelId);
+  let sql = `UPDATE my_database.todo SET todo.lable_id='${labelId}' WHERE todo.todo_id=${taskId}`;
+  con.query(sql, function (err, result) {
+      if (err) throw err;
+      res.send(result);
+    });
+});
 app.put('/api/label/:lable_id',(req,res)=>{
 
   let labelId=req.params.lable_id;
