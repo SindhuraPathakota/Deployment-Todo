@@ -19,6 +19,13 @@ CREATE TABLE `todo_list` (
   PRIMARY KEY (`list_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+  `user_id` varchar(256) NOT NULL,
+  `user_password` varchar(256) NOT NULL,
+  `user_name` varchar(256) NOT NULL,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 

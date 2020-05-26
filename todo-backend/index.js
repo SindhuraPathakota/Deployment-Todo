@@ -27,8 +27,8 @@ var con = mysql.createConnection({
  /*
    host: "localhost",
   user: "root",
-  password: "" 
- */
+  password: "password" 
+ /*
 });
 
 con.connect(function(err) {
@@ -164,6 +164,21 @@ app.put('/api/task/:todo_id',(req,res)=>{
         res.send(result);
       });
   });
+
+ app.post('/api/users',(req,res)=>{
+    let sql= `INSERT INTO my_database.users(user_id,user_password,user_name) VALUES('${req.body.email}','${req.body.password}','${req.body.name}')`
+    con.query(sql, function (err, result) {
+        if (err && err.code === 'ER_DUP_ENTRY') res.status(400).send('The user already registered') ;
+        res.send(result);
+      });
+})
+app.post('/api/auth',(req,res) =>{
+    let sql = `select user_id,user_name from my_database.users where user_password = '${req.body.password}' && user_id = '${req.body.email}'`;
+    con.query(sql, function (err, result) {
+        res.send(result);        
+      });
+})
+
 
 
 //Functions
