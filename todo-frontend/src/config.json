@@ -7,5 +7,6 @@
     "postTodo"    : "http://158.69.156.182:3021/api/task",
     "postLable"    : "http://158.69.156.182:3021/api/lable",
     "labelLink": "http://158.69.156.182:3021/api/label",
-    "postLabelToTodo": "http://158.69.156.182:3021/api/task/addlabel"
+    "postLabelToTodo": "http://158.69.156.182:3021/api/task/addlabel",
+    "getAllTasks" :"http://158.69.156.182:3021/api/allTasks"
 }

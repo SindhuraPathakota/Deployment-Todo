@@ -17,6 +17,7 @@ class Table extends Component {
     taskLabels :[],
     isInSetLabel :false,
     setLabelId:0,
+    checkedtask : false,
   };
   
 
@@ -129,6 +130,15 @@ this.state.taskLabels.map((label)=>{if(label.lable_id===labelId){this.setState({
 
 }
 
+handleTaskCheck=async(task)=>{
+ await http.put(config.postTodo+"/taskdone/"+task.todo_id);
+ const { data : tasks } = await http.get(config.getTaskList+ "/" + this.props.id);
+    this.setState({
+      tasks,
+    });
+  
+}
+
 renderDefaultView =(tas)=>{return <td> {tas.title}</td>}	
 
   render() {
@@ -138,6 +148,7 @@ renderDefaultView =(tas)=>{return <td> {tas.title}</td>}
         <table  className="table table-striped table-bordered table-hover">
           <thead className="thead-dark">
             <tr className="change">
+              <th>Task Done</th>
               <th>{this.props.title}</th>
               <th><AddTodo addTodo={this.addTodo}/></th>
               <th><button
@@ -152,7 +163,9 @@ renderDefaultView =(tas)=>{return <td> {tas.title}</td>}
           <tbody>
           {this.state.tasks.map((task) => (
         
-				<tr key={task.todo_id}>
+				<tr key={task.todo_id} >
+       <td> <input type="checkbox" checked={task.task_done} disabled={task.task_done} onChange={()=>this.handleTaskCheck(task)}></input>
+        </td>
         {this.state.eidtTodoId===task.todo_id?this.state.isInEditMode ?
                 <td>    
                     <input type="text" defaultValue={task.title} onChange={this.textOnChange} ></input>
@@ -168,7 +181,7 @@ renderDefaultView =(tas)=>{return <td> {tas.title}</td>}
                   <div style={{display:'flex'}}>
                  
               
-                    <button style={{marginRight: '8px'}}
+                    <button style={{marginRight: '8px',display:task.task_done?'none':''}}
                      className="btn btn-info" disabled={this.state.isInEditMode}
                      onClick={() => this.handleUpdate(task)}>
                      Edit
@@ -183,11 +196,11 @@ renderDefaultView =(tas)=>{return <td> {tas.title}</td>}
                         {this.state.taskLabels.map((taskLabel) => <option key={taskLabel.lable_id} value={taskLabel.lable_id} style={{backgroundColor:`${taskLabel.lable_color}`}}>{taskLabel.lable_name}</option>)}
                       </select>:'':''}
                    
-                   <button style={{marginRight: '8px'}} className="btn btn-info" disabled={this.state.isInSetLabel} onClick={()=>this.handleGiveLabels(task.todo_id)}>Labels</button>
+                   <button style={{marginRight: '8px',display:task.task_done?'none':''}} className="btn btn-info" disabled={this.state.isInSetLabel} onClick={()=>this.handleGiveLabels(task.todo_id)}>Labels</button>
                    
                     {this.state.taskPointsId===task.todo_id?this.state.givepointsBtnTxt === "Save"?<input style={{width: '10%'}} type="number" defaultValue={task.task_points} onChange={this.pointsOnChange}/>:' ':''}
                     {task.task_points !== 0?<h6 style={{color:'darkblue'}}>Task Points : {task.task_points} </h6>:''}
-                    <button className="btn btn-info" onClick={()=> this.handleGivePoints(task)}>{this.state.givepointsBtnTxt}</button>
+                    <button className="btn btn-info" style={{display:task.task_done?'none':''}} onClick={()=> this.handleGivePoints(task)}>{this.state.givepointsBtnTxt}</button>
                     
                   </div>
                 </td>

@@ -13,20 +13,34 @@ export class Lables extends Component
         isInEditMode: false,
         lables : [],
         editedText:'',
+        tasksWithLabels:[],
 
     }
 
     textOnChange=(e)=>{
         this.setState({editedText:e.target.value}) ;
         }
-    handleDeleteLabel=async (label) =>{
-        await http.delete(config.labelLink+"/"+label.lable_id);
-        const { data : lables } = await http.get(config.getLableList);
+    handleDeleteLabel= async (label) =>{
+        let isLabelAsigned =false;
+        this.state.tasksWithLabels.map((labelId)=>{
+            if(labelId.lable_id===label.lable_id){
+                isLabelAsigned=true;
+            }
+        });
+        if(!isLabelAsigned){
+            await http.delete(config.labelLink+"/"+label.lable_id);
+        }else{
+            alert("Label is assigned to the task, unassign the label and try to delete")
+        }
+        
+        const { data : lables } =  await http.get(config.getLableList);
         this.setState({ lables });
     }
     async componentDidMount() {
+        const { data : tasksWithLabels } = await http.get(config.getAllTasks);
         const { data : lables } = await http.get(config.getLableList);
-        this.setState({ lables });
+        this.setState({ tasksWithLabels,lables });
+    
       }
     
     onSubmit = async (e) => {
@@ -113,7 +127,7 @@ export class Lables extends Component
                         
                             &nbsp;&nbsp;&nbsp; &nbsp;
                             
-                            <button className="btn btn-danger" onClick={(e) => { if (window.confirm('Check if the label is assigned to the task')) this.handleDeleteLabel(label)}}>Delete</button>
+                            <button className="btn btn-danger" onClick={() => this.handleDeleteLabel(label)}>Delete</button>
                         
                         </li>
                      ))} 

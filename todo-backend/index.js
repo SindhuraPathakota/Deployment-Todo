@@ -20,10 +20,11 @@ app.use(function(req, res, next) {
 var mysql = require('mysql');
 var con = mysql.createConnection({
   
-  
+ 
   host: 'db',
   user: "root",
   password: "root"
+
  /*
    host: "localhost",
   user: "root",
@@ -131,7 +132,23 @@ app.put('/api/task/addpoints/:task_id',(req,res)=>{
       res.send(result);
     });
 });
+app.put('/api/task/taskdone/:task_id',(req,res)=>{
+console.log('task DOne');
+  let taskId=req.params.task_id;
+  let sql = `UPDATE my_database.todo SET todo.task_done=1 WHERE todo.todo_id=${taskId}`;
+  con.query(sql, function (err, result) {
+      if (err) throw err;
+      res.send(result);
+    });
+});
 
+app.get('/api/allTasks', (req, res) => {
+  let sql = 'SELECT DISTINCT lable_id FROM my_database.todo WHERE lable_id != ""';
+      con.query(sql, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+      });
+});
 app.put('/api/task/addlabel/:task_id',(req,res)=>{
   
   let taskId=req.params.task_id;
