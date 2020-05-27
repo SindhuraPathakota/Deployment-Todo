@@ -110,7 +110,7 @@ export class Lables extends Component
                 <br></br>
             </form>
             
-            <div>
+            <div style={{ display: this.state.lables.length == 0? 'none': ''}}>
                 <ul style={{display: 'grid',border: '1px solid black',padding: '10px',width:'70%'}}>
                      {this.state.lables.map((label) => (
                         <li  key={label.lable_id} style={{display: '-webkit-inline-box',   marginBottom: '15px'}}> 

@@ -8,5 +8,7 @@
     "postLable"    : "http://158.69.156.182:3021/api/lable",
     "labelLink": "http://158.69.156.182:3021/api/label",
     "postLabelToTodo": "http://158.69.156.182:3021/api/task/addlabel",
-    "getAllTasks" :"http://158.69.156.182:3021/api/allTasks"
+    "getAllTasks" :"http://158.69.156.182:3021/api/allTasks",
+    "users" : "http://158.69.156.182:3021/api/users",
+    "auth"  : "http://158.69.156.182:3021/api/auth"
 }

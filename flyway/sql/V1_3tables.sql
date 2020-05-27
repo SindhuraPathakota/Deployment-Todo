@@ -1,9 +1,9 @@
 
-
+use my_database;
 --
 -- Table structure for table `lables`
 --
-
+ 
 CREATE TABLE `lables` (
   `lable_id` int(11) NOT NULL AUTO_INCREMENT,
   `lable_name` varchar(255) NOT NULL,
@@ -19,6 +19,13 @@ CREATE TABLE `todo_list` (
   PRIMARY KEY (`list_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+  `user_id` varchar(256) NOT NULL,
+  `user_password` varchar(256) NOT NULL,
+  `user_name` varchar(256) NOT NULL,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 
 
@@ -28,6 +35,7 @@ CREATE TABLE `todo` (
   `list_id` int(11) NOT NULL,
   `task_points` int(11) DEFAULT '0',
   `lable_id` int(11) DEFAULT NULL,
+  `task_done` tinyint(4) DEFAULT '0',
   PRIMARY KEY (`todo_id`),
   KEY `list_id` (`list_id`),
   KEY `lable_ibfk_2_idx` (`lable_id`),
